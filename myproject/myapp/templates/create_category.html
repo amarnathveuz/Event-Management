@@ -181,23 +181,38 @@ h3 {
     padding: 7px 17px;">Category Creation</h1>
    
     <form action="" method="post">
+      {% csrf_token %}
       <div class="form-group">
         <label for="name"> Name</label>
-        <input class="form-control" id="name" type="text" name="Name">
+        <input class="form-control" id="name" required type="text" name="category_name">
       </div>
      
     
       <div class="form-group">
         <label for="email">Description</label>
-        <input class="form-control" id="email" type="text" name="Email">
+        <input class="form-control" id="email" type="text" name="description">
       </div>
    
      <br>
   
       <br>
-      <input style="    width: 20%;" class="btn btn-primary" type="submit" value="Submit" />
+      <input style="    width: 30%;" class="btn btn-primary" type="submit" value="Submit" />
       </div>
     </form>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+
+
+  {% if messages %}
+  <script>
+   {% for message in messages %}
+      Swal.fire(
+          '',
+          '{{ message }}',
+          '{{message.tags}}'
+      )
+   {% endfor %}
+  </script>
+  {% endif %}
 {% endblock %}

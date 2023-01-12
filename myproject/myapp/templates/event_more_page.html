@@ -1,0 +1,511 @@
+
+{% extends 'base.html' %}
+
+{% load static %}
+{% block content %}
+<style>
+    .form-box {
+        max-width: 100%;
+  margin: auto;
+  padding: 50px;
+  background: #ffffff;
+  border: 10px solid #f2f2f2;
+}
+
+h1, p {
+  text-align: center;
+}
+
+input, textarea {
+  width: 100%;
+  
+}
+.form-control{
+    display: block;
+    width: 95%;
+    padding: 0.375rem 0.75rem;
+    font-size: .8125rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #303e67;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #e3ebf6;
+    appearance: none;
+    border-radius: 0.25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+.form-group{
+    margin: 8px 0px;
+}
+@import 'https://fonts.googleapis.com/css?family=Open+Sans:600,700';
+
+* {font-family: 'Open Sans', sans-serif;}
+
+.rwd-table {
+  margin: auto;
+  min-width: 300px;
+  max-width: 100%;
+  border-collapse: collapse;
+}
+
+.rwd-table tr:first-child {
+  border-top: none;
+  background: #e53471ad;
+  color: #fff;
+}
+
+.rwd-table tr {
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  background-color: #f5f9fc;
+}
+
+.rwd-table tr:nth-child(odd):not(:first-child) {
+  background-color: #ebf3f9;
+}
+
+.rwd-table th {
+  display: none;
+}
+
+.rwd-table td {
+  display: block;
+}
+
+.rwd-table td:first-child {
+  margin-top: .5em;
+}
+
+.rwd-table td:last-child {
+  margin-bottom: .5em;
+}
+
+.rwd-table td:before {
+  content: attr(data-th) ": ";
+  font-weight: bold;
+  width: 120px;
+  display: inline-block;
+  color: #000;
+}
+
+.rwd-table th,
+.rwd-table td {
+  text-align: left;
+}
+
+.rwd-table {
+  color: #333;
+  border-radius: .4em;
+  overflow: hidden;
+}
+
+.rwd-table tr {
+  border-color: #bfbfbf;
+}
+
+.rwd-table th,
+.rwd-table td {
+  padding: .5em 1em;
+}
+@media screen and (max-width: 601px) {
+  .rwd-table tr:nth-child(2) {
+    border-top: none;
+  }
+}
+@media screen and (min-width: 600px) {
+  .rwd-table tr:hover:not(:first-child) {
+    background-color: #d8e7f3;
+  }
+  .rwd-table td:before {
+    display: none;
+  }
+  .rwd-table th,
+  .rwd-table td {
+    display: table-cell;
+    padding: .25em .5em;
+  }
+  .rwd-table th:first-child,
+  .rwd-table td:first-child {
+    padding-left: 0;
+  }
+  .rwd-table th:last-child,
+  .rwd-table td:last-child {
+    padding-right: 0;
+  }
+  .rwd-table th,
+  .rwd-table td {
+    padding: 1em !important;
+  }
+}
+
+
+/* THE END OF THE IMPORTANT STUFF */
+
+/* Basic Styling */
+
+
+
+h3 {
+  display: inline-block;
+  position: relative;
+  text-align: center;
+  font-size: 1.5em;
+  color: #cecece;
+}
+
+
+/*
+    Don't look at this last part. It's unnecessary. I was just playing with pixel gradients... Don't judge.
+*/
+/*
+@media screen and (max-width: 601px) {
+  .rwd-table tr {
+    background-image: -webkit-linear-gradient(left, #428bca 137px, #f5f9fc 1px, #f5f9fc 100%);
+    background-image: -moz-linear-gradient(left, #428bca 137px, #f5f9fc 1px, #f5f9fc 100%);
+    background-image: -o-linear-gradient(left, #428bca 137px, #f5f9fc 1px, #f5f9fc 100%);
+    background-image: -ms-linear-gradient(left, #428bca 137px, #f5f9fc 1px, #f5f9fc 100%);
+    background-image: linear-gradient(left, #428bca 137px, #f5f9fc 1px, #f5f9fc 100%);
+  }
+  .rwd-table tr:nth-child(odd) {
+    background-image: -webkit-linear-gradient(left, #428bca 137px, #ebf3f9 1px, #ebf3f9 100%);
+    background-image: -moz-linear-gradient(left, #428bca 137px, #ebf3f9 1px, #ebf3f9 100%);
+    background-image: -o-linear-gradient(left, #428bca 137px, #ebf3f9 1px, #ebf3f9 100%);
+    background-image: -ms-linear-gradient(left, #428bca 137px, #ebf3f9 1px, #ebf3f9 100%);
+    background-image: linear-gradient(left, #428bca 137px, #ebf3f9 1px, #ebf3f9 100%);
+  }
+}*/
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<!-- 3. BOOTSTRAP v4.0.0         JS !-->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<div class="form-box">
+    <a href="../event_website?slug={{data.slug}}" target="_blank">
+        <img style="    width: 3%;" src="../static/e1.png">
+    </a>
+    <h1 style="    font-size: 24px;
+    padding: 7px 17px;">{{data.name}}</h1>
+   
+  
+    <form action="" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+        <!-- <input style="    width: 6%;" class="btn btn-primary" type="submit" value="Save" /> -->
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+                <label for="name"> Name</label>
+                <input class="form-control" id="name" type="text" required name="name" value="{{data.name}}" readonly>
+              </div>
+        </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="name"> Category</label>
+                    <input class="form-control" id="name" type="text" required name="name" value="{{data.category_id.category_name}}" readonly>
+                  </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="email">Start  Date</label>
+                    <input class="form-control" id="email" type="date" required name="start_date" value="{{data.start_date|safe}}" readonly>
+                  </div>
+            </div>
+            <div class="col-md-6">   <div class="form-group">
+                <label for="email">Start  Time</label>
+                <input class="form-control" id="email" type="time" required name="start_time" value="{{data.start_time|safe}}" readonly>
+              </div></div>
+
+            <div class="col-md-6">  <div class="form-group">
+                <label for="email">End  Date</label>
+                <input class="form-control" id="email" type="date" required name="end_date" value="{{data.end_date|safe}}" readonly>
+              </div></div>
+            <div class="col-md-6"> <div class="form-group">
+                <label for="email">End  Time</label>
+                <input class="form-control" id="email" type="time" required name="end_time" value="{{data.end_time|safe}}" readonly>
+              </div></div>
+            <!-- <div class="col-md-6"> 
+                <div class="form-group">
+                  <label for="email">Image</label>
+                  <input class="form-control" id="email" type="file" name="image">
+                </div></div> -->
+            <div class="col-md-6">  <div class="form-group">
+                <label for="email">Tags</label>
+                <input class="form-control" id="email" type="text" name="Email">
+              </div></div>
+            <div class="col-md-6"> <div class="form-group">
+                <label for="email">Organizer</label>
+                <input class="form-control" id="email" type="text" required name="organizer" value="{{data.organizer|safe}}" readonly>
+              </div></div>
+            <div class="col-md-6">  <div class="form-group">
+                <label for="email">Responsible</label>
+                <input class="form-control" id="email" type="text" required name="responsible" value="{{data.responsible}}" readonly>
+              </div></div>
+            <div class="col-md-6"> <div class="form-group">
+                <label for="email">Responsible person no</label>
+                <input class="form-control" id="email" type="text" required name="responsible_person_no" value="{{data.responsible_person_no}}" readonly>
+              </div></div>
+            <div class="col-md-6">  <div class="form-group">
+                <label for="email">Company</label>
+                <input class="form-control" id="email" type="text" name="company" value="{{data.company}}" readonly>
+              </div></div>
+
+              <div class="col-md-6">  <div class="form-group">
+                <label for="email">Venue</label>
+                <input class="form-control" id="email" type="text" name="venue" value="{{data.venue}}" readonly>
+              </div> </div>
+              <!-- <div class="col-md-6">  <div class="form-group">
+                <label for="email">Exhibition Map</label>
+                <input class="form-control" id="email" type="file"  name="exhibition_map">
+              </div> </div> -->
+              <div class="col-md-6">   <div class="form-group">
+                <label for="email">Limit Registrations</label>
+              
+              <input {% if data.limit_registrations == True %} checked {% else %}  {% endif %} style="width: 10%;" name="limit_registrations" onclick="limit_reg_action()" type="checkbox" value="True">
+
+              <input id="limit_registration_no"  class="form-control" type="number" name="limit_registration_no" style="width: 30%;display: none;">
+              </div> </div>
+              
+            <br>
+           
+            <!-- 2. GOOGLE JQUERY JS v3.2.1  JS !-->
+       
+           
+
+            <ul class="nav nav-tabs" id="myTab" role="tablist" style="margin-top: 33px;">
+                <li class="nav-item">
+                  <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Tickets</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Questions</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Notes</a>
+                </li>
+              </ul>
+              <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+
+
+                    <table class="table table-bordered mt-4">
+                        <thead>
+                          <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Product</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Sales Start</th>
+                            <th scope="col">Sales End</th>
+                            <th scope="col">Maximum</th>
+                            <th scope="col">Confirmed</th>
+                            <th scope="col">unconfirmed</th>
+
+                        </thead>
+                        <tbody id="append_ticket">
+
+
+                            {% for j in data.Event_ticket_event_id.all %}
+                          <tr>
+                            <th scope="row">
+
+                              <input class="form-control" type="text" name="ticket_name[]" value="{{j.name}}" readonly>
+                            </th>
+                            <td>   <input class="form-control" type="text" name="ticket_description[]" value="{{j.description}}" readonly></td>
+                            <td>
+                              <input class="form-control" type="text" name="ticket_product[]" value="{{j.product}}" readonly>
+
+                            </td>
+                            <td> <input class="form-control" type="number" name="ticket_price[]" value="{{j.price}}" readonly></td>
+                            <td><input class="form-control" type="date" name="ticket_salestart[]" value="{{j.sale_start_dt|safe}}" readonly></td>
+                            <td><input class="form-control" type="date" name="ticket_saleend[]" value="{{j.sale_end_dt|safe}}" readonly ></td>
+                            <td>  <input class="form-control" type="number" name="ticket_maximum[]" value="{{j.maximum|safe}}" readonly></td>
+                            <td>0</td>
+                            <td>0</td>
+                          </tr>
+
+                          {% endfor %}
+                       
+                        </tbody>
+                      </table>
+                      <a class="add_ticket_new_line_btn" href="#" style="    background: green;
+                      color: white;
+                      padding: 5px 13px;
+                      font-size: 10px;">Add a line</a>
+                    
+                </div>
+                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+
+
+                    <table class="table table-bordered mt-4">
+                        <thead>
+                          <tr>
+                            <th scope="col">Title</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Answer</th>
+                           
+
+                        </thead>
+                        <tbody id="add_new_question_line_btn1">
+
+                            {% for j in data.Event_question_event_id.all %}
+                          <tr>
+                            <th scope="row"><input type="text" name="question_title[]" class="form-control" value="{{j.title}}" readonly></th>
+                            <td>
+
+                                <input type="text" name="question_title[]" class="form-control" value="{{j.question_type}}" readonly>
+                            </td>
+                            <input type="hidden" name="questionanswercount[]" value="0">
+                            <td id="selection_type0">
+                                {% for j1 in j.Event_selection_question_question_id.all %}
+                              <input style="    width: 60%;" class="form-control mt-2" type="text" name="select_name0[]" readonly value="{{j1.answer}}"> 
+                              
+                              {% endfor %}
+                              <!-- <a href="#" onclick="select_btn(0)" style="    padding: 3px 6px;
+                              font-size: 11px;
+                              background: green;
+                              color: white;">Add line</a> -->
+
+                            </td>
+                           
+                          </tr>
+                       
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                      <a href="#" style="    background: green;
+                      color: white;
+                      padding: 5px 13px;
+                      font-size: 10px;" class="add_new_question_line_btn">Add a line</a>
+                </div>
+                <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+
+
+
+                    <div class="col-md-6">  <div class="form-group">
+                        <label for="email">Note</label>
+                        <input class="form-control" id="email" type="text" name="note" value="{{data_event_note.note}}">
+                      </div> </div>
+                      <div class="col-md-6">  <div class="form-group">
+                        <label for="email">Ticket Instructions</label>
+                        <input class="form-control" id="email" type="text" name="ticket_instructions" value="{{data_event_note.ticket_instructions}}">
+                      </div> </div>
+                      
+                </div>
+              </div>
+
+
+
+                
+
+        </div>
+    
+     
+    
+    
+   
+    
+    
+    
+     
+    
+     
+    
+     
+     
+    
+     <br>
+  
+      <br>
+     
+      </div>
+    </form>
+  </div>
+
+<!-- Button trigger modal -->
+
+  <script>
+    function limit_reg_action(){
+      $("#limit_registration_no").show()
+    }
+
+
+    $(".add_ticket_new_line_btn").click(function(){
+
+     
+    
+
+      $("#append_ticket").append(` <tr>
+                            <th scope="row">
+
+                              <input class="form-control" type="text" name="ticket_name[]">
+                            </th>
+                            <td>   <input class="form-control" type="text" name="ticket_description[]"></td>
+                            <td>
+                              <input class="form-control" type="text" name="ticket_product[]">
+
+                            </td>
+                            <td> <input class="form-control" type="number" name="ticket_price[]"></td>
+                            <td><input class="form-control" type="date" name="ticket_salestart[]"></td>
+                            <td><input class="form-control" type="date" name="ticket_saleend[]"></td>
+                            <td>  <input class="form-control" type="number" name="ticket_maximum[]"></td>
+                            <td>0</td>
+                            <td>0</td>
+                          </tr>`)
+    })
+
+
+    function select_btn(value){
+      $("#selection_type"+value).append(`
+      <input  style="    width: 60%;" class="form-control mt-2" type="text" name="select_name`+value+`[]"> 
+      `)
+    }
+
+
+    question_count = 0
+    $(".add_new_question_line_btn").click(function(){
+      question_count = question_count + 1
+    
+
+      $("#add_new_question_line_btn1").append(` <tr>
+                            <th scope="row"><input type="text" name="question_title[]" class="form-control"></th>
+                            <td>
+
+                              <select class="form-control" name="question_type[]">
+                                <option value="Selection">Selection</option>
+                                <option value="Text Input">Text Input</option>
+                              </select>
+                            </td>
+                            
+                            <td id="selection_type`+question_count+`">
+                              <input type="hidden" name="questionanswercount[]" value=`+question_count+`>
+                              <input style="    width: 60%;" class="form-control" type="text" name="select_name`+question_count+`[]"> <a href="#" onclick="select_btn(`+question_count+`)" style="    padding: 3px 6px;
+                              font-size: 11px;
+                              background: green;
+                              color: white;">Add line</a>
+
+                            </td>
+                           
+                          </tr>`)
+    })
+
+
+
+    function question_type_onchange(value){
+      alert(value)
+      console.log('You selected: ', this.value);
+    }
+  </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
+    {% if messages %}
+    <script>
+     {% for message in messages %}
+        Swal.fire(
+            '',
+            '{{ message }}',
+            '{{message.tags}}'
+        )
+     {% endfor %}
+    </script>
+    {% endif %}
+{% endblock %}

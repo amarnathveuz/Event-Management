@@ -133,20 +133,125 @@ def create_role(request):
 
 
 def category(request):
-    return render(request,'category.html')
+
+    auth_user  = User.objects.get(id=request.user.id)
+    if auth_user.is_superuser == True:
+        data = ''
+    else:
+        user_data = company_User.objects.get(auth_user=request.user)
+        company_id = user_data.company_id.id
+        data = event_Category.objects.filter(company_id_id=company_id)
+    context = {
+        'data':data
+    }
+    return render(request,'category.html',context)
 
 
 
 def create_category(request):
+    if request.method == "POST":
+        auth_user = User.objects.get(id=request.user.id)
+        if auth_user.is_superuser == True:
+            pass
+        else:
+            category_name = request.POST.get("category_name",False)
+            description = request.POST.get("description",False)
+            user_data = company_User.objects.get(auth_user=request.user)
+            company_id = user_data.company_id
+            data_save_cat  = event_Category.objects.create(category_name=category_name,company_id_id=company_id.id,description=description,created_by=request.user)
+            messages.success(request,'event category successfully created')
+            return redirect(request.META['HTTP_REFERER'])
+            
     return render(request,'create_category.html')
 
 
 def event(request):
-    return render(request,'event.html')
+    auth_user = User.objects.get(id=request.user.id)
+    print("auth_user::::",str(auth_user.is_superuser))
+    if auth_user.is_superuser == True:
+        data = ''
+    else:
+        user_data = company_User.objects.get(auth_user=request.user)
+        
+        data = event_Creation.objects.filter(company_id_id=user_data.company_id.id)
+    context = {
+        'data':data
+    }
+    return render(request,'event.html',context)
 
 
 def create_event(request):
-    return render(request,'create_event.html')
+    if request.method == "POST":
+        # auth_user = User.objects.get(id=request.user.id)
+        user_data = company_User.objects.get(auth_user=request.user)
+        name = request.POST.get("name")
+        start_date = request.POST.get("start_date")
+        start_time = request.POST.get("start_time")
+        end_date = request.POST.get("end_date")
+        end_time = request.POST.get("end_time")
+        image = request.FILES['image']
+        organizer = request.POST.get("organizer")
+        responsible = request.POST.get("responsible")
+        responsible_person_no = request.POST.get("responsible_person_no")
+        company = request.POST.get("company")
+        venue = request.POST.get("venue")
+        exhibition_map = request.POST.get("exhibition_map")
+        limit_registrations = request.POST.get("limit_registrations")
+        if limit_registrations == None:
+            limit_registrations = False
+        limit_registration_no = request.POST.get("limit_registration_no")
+        if limit_registration_no == '':
+            limit_registration_no = 0
+        category_id = request.POST.get("category_id")
+        ticket_name = request.POST.getlist("ticket_name[]")
+        ticket_description = request.POST.getlist("ticket_description[]")
+        ticket_product = request.POST.getlist("ticket_product[]")
+        ticket_price = request.POST.getlist("ticket_price[]")
+        ticket_salestart = request.POST.getlist("ticket_salestart[]")
+        ticket_saleend = request.POST.getlist("ticket_saleend[]")
+        ticket_maximum = request.POST.getlist("ticket_maximum[]")
+        data_save_event = event_Creation.objects.create(name=name,start_date=start_date,start_time=start_time,end_date=end_date,end_time=end_time,image=image,organizer=organizer,responsible=responsible,responsible_person_no=responsible_person_no,company=company,company_id_id=user_data.company_id.id,venue=venue,limit_registrations=limit_registrations,limit_registration_no=limit_registration_no,category_id_id=category_id,created_by=request.user)
+        ticket_zip_object = zip(ticket_name,ticket_description,ticket_product,ticket_price,ticket_salestart,ticket_saleend,ticket_maximum)
+        for name,description,product,price,salestart,saleend,maximum in ticket_zip_object:
+            data_save_Event_ticket = Event_ticket(
+                event_id_id = data_save_event.id,
+                name = name,
+                description = description,
+                product  = product,
+                price = price,
+                sale_start_dt = salestart,
+                sale_end_dt = saleend,
+                maximum = maximum
+
+            )
+            data_save_Event_ticket.save()
+        question_title = request.POST.getlist("question_title[]")
+        question_type = request.POST.getlist("question_type[]")
+        questionanswercount = request.POST.getlist("questionanswercount[]")
+        question_zip_object = zip(question_title,question_type,questionanswercount)
+        for title,type,answer_count in question_zip_object:
+            save_Event_question = Event_question.objects.create(event_id_id=data_save_event.id,question_type=type,title=title)
+            if type == "Selection":
+                select_name = request.POST.getlist("select_name"+answer_count+"[]")
+                for i in select_name:
+                    save_select_answer = Event_selection_question.objects.create(Event_question_id_id=save_Event_question.id,answer=i)
+        note = request.POST.get("note")
+        ticket_instructions = request.POST.getlist("ticket_instructions")
+        save_note = Event_note.objects.create(event_id_id=data_save_event.id,note=note,ticket_instructions=ticket_instructions)
+        
+        messages.success(request,'event  successfully created')
+        return redirect(request.META['HTTP_REFERER'])
+    
+    user_auth = User.objects.get(id=request.user.id)
+    if user_auth.is_superuser == True:
+        data = ''
+    else:
+        user_data = company_User.objects.get(auth_user=request.user)
+        data = event_Category.objects.filter(company_id_id=user_data.company_id.id)
+    context = {
+        'data':data
+    }
+    return render(request,'create_event.html',context)
 
 
 
@@ -357,3 +462,41 @@ def edit_role(request,pk):
     return render(request,'edit_role.html',context)
 
     
+
+
+def edit_category(request,pk):
+    if request.method == "POST":
+        category_name= request.POST.get("category_name")
+        id = request.POST.get("id")
+        description = request.POST.get("description")
+        update_category = event_Category.objects.filter(id=pk).update(category_name=category_name,description=description)
+        messages.success(request,'event category successfully updated')
+        return redirect(request.META['HTTP_REFERER'])
+
+    data = event_Category.objects.get(id=pk)
+    context = {
+        'data':data
+    }
+    return render(request,'edit_category.html',context)
+
+
+
+def event_more_page(request,pk):
+    data = event_Creation.objects.get(id=pk)
+    print("data::::",str(data))
+    data_event_note = Event_note.objects.get(event_id_id=pk)
+    context = {
+        'data':data,
+        'data_event_note':data_event_note
+    }
+    return render(request,'event_more_page.html',context)
+
+
+def event_website(request):
+    slug = request.GET.get("slug")
+    print("slug::::",str(slug))
+    data = event_Creation.objects.get(slug=slug)
+    context = {
+        'data':data
+    }
+    return render(request,'event_website.html',context)

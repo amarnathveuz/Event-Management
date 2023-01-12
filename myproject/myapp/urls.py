@@ -17,6 +17,11 @@ urlpatterns = [
     path('create_company_action',views.create_company_action,name='create_company_action'),
     path('edit_user/<int:pk>',views.edit_user,name='edit_user'),
     path('edit_role/<int:pk>',views.edit_role,name='edit_role'),
+    path('edit_category/<int:pk>',views.edit_category,name='edit_category'),
+    path('event_more_page/<int:pk>',views.event_more_page,name='event_more_page'),
+    path('event_website',views.event_website,name='event_website'),
+    
+    
 
     
     

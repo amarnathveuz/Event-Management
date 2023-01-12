@@ -183,38 +183,51 @@ h3 {
     <h1 style="    font-size: 24px;
     padding: 7px 17px;">Event Creation</h1>
    
-    <form action="" method="post">
+    <form action="" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
         <input style="    width: 6%;" class="btn btn-primary" type="submit" value="Save" />
         <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+                <label for="name"> Name</label>
+                <input class="form-control" id="name" type="text" required name="name">
+              </div>
+        </div>
             <div class="col-md-6">
                 <div class="form-group">
-                    <label for="name"> Name</label>
-                    <input class="form-control" id="name" type="text" name="Name">
+                    <label for="name"> Category</label>
+                   <select class="form-control" name="category_id">
+
+                    {% for i in data %}
+
+                    <option value="{{i.id}}">{{i.category_name}}</option>
+                    {% endfor %}
+                   </select>
                   </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group">
                     <label for="email">Start  Date</label>
-                    <input class="form-control" id="email" type="date" name="Email">
+                    <input class="form-control" id="email" type="date" required name="start_date">
                   </div>
             </div>
             <div class="col-md-6">   <div class="form-group">
                 <label for="email">Start  Time</label>
-                <input class="form-control" id="email" type="time" name="Email">
+                <input class="form-control" id="email" type="time" required name="start_time">
               </div></div>
 
             <div class="col-md-6">  <div class="form-group">
                 <label for="email">End  Date</label>
-                <input class="form-control" id="email" type="date" name="Email">
+                <input class="form-control" id="email" type="date" required name="end_date">
               </div></div>
             <div class="col-md-6"> <div class="form-group">
                 <label for="email">End  Time</label>
-                <input class="form-control" id="email" type="time" name="Email">
+                <input class="form-control" id="email" type="time" required name="end_time">
               </div></div>
             <div class="col-md-6"> 
                 <div class="form-group">
                   <label for="email">Image</label>
-                  <input class="form-control" id="email" type="file" name="Email">
+                  <input class="form-control" id="email" type="file" name="image">
                 </div></div>
             <div class="col-md-6">  <div class="form-group">
                 <label for="email">Tags</label>
@@ -222,33 +235,36 @@ h3 {
               </div></div>
             <div class="col-md-6"> <div class="form-group">
                 <label for="email">Organizer</label>
-                <input class="form-control" id="email" type="text" name="Email">
+                <input class="form-control" id="email" type="text" required name="organizer">
               </div></div>
             <div class="col-md-6">  <div class="form-group">
                 <label for="email">Responsible</label>
-                <input class="form-control" id="email" type="text" name="Email">
+                <input class="form-control" id="email" type="text" required name="responsible">
               </div></div>
             <div class="col-md-6"> <div class="form-group">
                 <label for="email">Responsible person no</label>
-                <input class="form-control" id="email" type="text" name="Email">
+                <input class="form-control" id="email" type="text" required name="responsible_person_no">
               </div></div>
             <div class="col-md-6">  <div class="form-group">
                 <label for="email">Company</label>
-                <input class="form-control" id="email" type="text" name="Email">
+                <input class="form-control" id="email" type="text" name="company">
               </div></div>
 
               <div class="col-md-6">  <div class="form-group">
                 <label for="email">Venue</label>
-                <input class="form-control" id="email" type="text" name="Email">
+                <input class="form-control" id="email" type="text" name="venue">
               </div> </div>
               <div class="col-md-6">  <div class="form-group">
                 <label for="email">Exhibition Map</label>
-                <input class="form-control" id="email" type="file" name="Email">
+                <input class="form-control" id="email" type="file"  name="exhibition_map">
               </div> </div>
               <div class="col-md-6">   <div class="form-group">
                 <label for="email">Limit Registrations</label>
-                <input class="form-control" id="email" type="file" name="Email">
+              <input style="width: 10%;" name="limit_registrations" onclick="limit_reg_action()" type="checkbox" value="True">
+
+              <input id="limit_registration_no"  class="form-control" type="number" name="limit_registration_no" style="width: 30%;display: none;">
               </div> </div>
+              
             <br>
            
             <!-- 2. GOOGLE JQUERY JS v3.2.1  JS !-->
@@ -284,21 +300,28 @@ h3 {
                             <th scope="col">unconfirmed</th>
 
                         </thead>
-                        <tbody>
+                        <tbody id="append_ticket">
                           <tr>
-                            <th scope="row"></th>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <th scope="row">
+
+                              <input class="form-control" type="text" name="ticket_name[]">
+                            </th>
+                            <td>   <input class="form-control" type="text" name="ticket_description[]"></td>
+                            <td>
+                              <input class="form-control" type="text" name="ticket_product[]">
+
+                            </td>
+                            <td> <input class="form-control" type="number" name="ticket_price[]"></td>
+                            <td><input class="form-control" type="date" name="ticket_salestart[]"></td>
+                            <td><input class="form-control" type="date" name="ticket_saleend[]"></td>
+                            <td>  <input class="form-control" type="number" name="ticket_maximum[]"></td>
+                            <td>0</td>
+                            <td>0</td>
                           </tr>
                        
                         </tbody>
                       </table>
-                      <a href="" style="    background: green;
+                      <a class="add_ticket_new_line_btn" href="#" style="    background: green;
                       color: white;
                       padding: 5px 13px;
                       font-size: 10px;">Add a line</a>
@@ -316,20 +339,33 @@ h3 {
                            
 
                         </thead>
-                        <tbody>
+                        <tbody id="add_new_question_line_btn1">
                           <tr>
-                            <th scope="row"></th>
-                            <td></td>
-                            <td></td>
+                            <th scope="row"><input type="text" name="question_title[]" class="form-control"></th>
+                            <td>
+
+                              <select  class="form-control" name="question_type[]">
+                                <option value="Selection">Selection</option>
+                                <option value="Text Input">Text Input</option>
+                              </select>
+                            </td>
+                            <input type="hidden" name="questionanswercount[]" value="0">
+                            <td id="selection_type0">
+                              <input style="    width: 60%;" class="form-control" type="text" name="select_name0[]"> <a href="#" onclick="select_btn(0)" style="    padding: 3px 6px;
+                              font-size: 11px;
+                              background: green;
+                              color: white;">Add line</a>
+
+                            </td>
                            
                           </tr>
                        
                         </tbody>
                       </table>
-                      <a href="" style="    background: green;
+                      <a href="#" style="    background: green;
                       color: white;
                       padding: 5px 13px;
-                      font-size: 10px;">Add a line</a>
+                      font-size: 10px;" class="add_new_question_line_btn">Add a line</a>
                 </div>
                 <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
 
@@ -337,11 +373,11 @@ h3 {
 
                     <div class="col-md-6">  <div class="form-group">
                         <label for="email">Note</label>
-                        <input class="form-control" id="email" type="text" name="Email">
+                        <input class="form-control" id="email" type="text" name="note">
                       </div> </div>
                       <div class="col-md-6">  <div class="form-group">
                         <label for="email">Ticket Instructions</label>
-                        <input class="form-control" id="email" type="text" name="Email">
+                        <input class="form-control" id="email" type="text" name="ticket_instructions">
                       </div> </div>
                       
                 </div>
@@ -375,4 +411,93 @@ h3 {
     </form>
   </div>
 
+<!-- Button trigger modal -->
+
+  <script>
+    function limit_reg_action(){
+      $("#limit_registration_no").show()
+    }
+
+
+    $(".add_ticket_new_line_btn").click(function(){
+
+     
+    
+
+      $("#append_ticket").append(` <tr>
+                            <th scope="row">
+
+                              <input class="form-control" type="text" name="ticket_name[]">
+                            </th>
+                            <td>   <input class="form-control" type="text" name="ticket_description[]"></td>
+                            <td>
+                              <input class="form-control" type="text" name="ticket_product[]">
+
+                            </td>
+                            <td> <input class="form-control" type="number" name="ticket_price[]"></td>
+                            <td><input class="form-control" type="date" name="ticket_salestart[]"></td>
+                            <td><input class="form-control" type="date" name="ticket_saleend[]"></td>
+                            <td>  <input class="form-control" type="number" name="ticket_maximum[]"></td>
+                            <td>0</td>
+                            <td>0</td>
+                          </tr>`)
+    })
+
+
+    function select_btn(value){
+      $("#selection_type"+value).append(`
+      <input  style="    width: 60%;" class="form-control mt-2" type="text" name="select_name`+value+`[]"> 
+      `)
+    }
+
+
+    question_count = 0
+    $(".add_new_question_line_btn").click(function(){
+      question_count = question_count + 1
+    
+
+      $("#add_new_question_line_btn1").append(` <tr>
+                            <th scope="row"><input type="text" name="question_title[]" class="form-control"></th>
+                            <td>
+
+                              <select class="form-control" name="question_type[]">
+                                <option value="Selection">Selection</option>
+                                <option value="Text Input">Text Input</option>
+                              </select>
+                            </td>
+                            
+                            <td id="selection_type`+question_count+`">
+                              <input type="hidden" name="questionanswercount[]" value=`+question_count+`>
+                              <input style="    width: 60%;" class="form-control" type="text" name="select_name`+question_count+`[]"> <a href="#" onclick="select_btn(`+question_count+`)" style="    padding: 3px 6px;
+                              font-size: 11px;
+                              background: green;
+                              color: white;">Add line</a>
+
+                            </td>
+                           
+                          </tr>`)
+    })
+
+
+
+    function question_type_onchange(value){
+      alert(value)
+      console.log('You selected: ', this.value);
+    }
+  </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
+    {% if messages %}
+    <script>
+     {% for message in messages %}
+        Swal.fire(
+            '',
+            '{{ message }}',
+            '{{message.tags}}'
+        )
+     {% endfor %}
+    </script>
+    {% endif %}
 {% endblock %}

@@ -74,3 +74,73 @@ class company_Role_Nav_Master(common):
     View_All = models.BooleanField(default=False)
     Manage_All = models.BooleanField(default=False)
     
+
+class event_Category(common):
+    category_name = models.CharField(max_length=25,null=True)
+    company_id = models.ForeignKey(company_Master,related_name='event_Category_company_id',null=True,on_delete=models.CASCADE)
+    description = models.TextField(null=True)
+
+
+
+import string
+import random
+from django.utils.text import slugify
+def rand_slug():
+    return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(1))
+
+class event_Creation(common):
+    name = models.CharField(max_length=25,null=True)
+    start_date = models.DateField(null=True)
+    start_time = models.TimeField(null=True)
+    end_date = models.DateField(null=True)
+    end_time = models.TimeField(null=True)
+    image = models.FileField(upload_to='event_image',null=True)
+    organizer = models.CharField(max_length=25,null=True)
+    responsible = models.CharField(max_length=25,null=True)
+    responsible_person_no = models.CharField(max_length=25,null=True)
+    company = models.CharField(max_length=25,null=True)
+    company_id = models.ForeignKey(company_Master,related_name='event_Creation_company_id',null=True,on_delete=models.CASCADE)
+    venue = models.TextField(null=True)
+    exhibition_map = models.FileField(upload_to='exhibition_map',null=True)
+    limit_registrations = models.BooleanField(default=False)
+    limit_registration_no = models.IntegerField(null=True)
+    category_id = models.ForeignKey(event_Category,related_name='event_Creation_category_id',null=True,on_delete=models.CASCADE)
+    slug = models.SlugField(max_length=255, unique=True)
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(rand_slug() + "-" + self.name)
+        super(event_Creation, self).save(*args, **kwargs)
+    
+
+class Event_ticket(common):
+    event_id = models.ForeignKey(event_Creation,related_name='Event_ticket_event_id',null=True,on_delete=models.CASCADE)
+    name = models.CharField(max_length=25,null=True)
+    description = models.CharField(max_length=25,null=True)
+    product = models.CharField(max_length=25,null=True)
+    price = models.FloatField(null=True)
+    sale_start_dt = models.DateField(null=True)
+    sale_end_dt =  models.DateField(null=True)
+    maximum = models.IntegerField(null=True)
+    confirmed = models.IntegerField(null=True)
+    unconfirmed = models.IntegerField(null=True)
+
+
+event_question_type = (
+    ("Selection","Selection"),
+    ("Text Input","Text Input")
+)
+
+class Event_question(common):
+    event_id = models.ForeignKey(event_Creation,related_name='Event_question_event_id',null=True,on_delete=models.CASCADE)
+    question_type = models.CharField(max_length=25,choices=event_question_type,null=True)
+    title = models.CharField(max_length=25,null=True)
+
+class Event_selection_question(common):
+    Event_question_id =  models.ForeignKey(Event_question,related_name='Event_selection_question_question_id',null=True,on_delete=models.CASCADE)
+    answer = models.CharField(max_length=25,null=True)
+
+
+class Event_note(common):
+    event_id = models.ForeignKey(event_Creation,related_name='Event_note_event_id',null=True,on_delete=models.CASCADE)  
+    note = models.CharField(max_length=25,null=True)
+    ticket_instructions = models.CharField(max_length=25,null=True)
