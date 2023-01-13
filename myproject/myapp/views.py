@@ -500,3 +500,9 @@ def event_website(request):
         'data':data
     }
     return render(request,'event_website.html',context)
+
+
+
+def dynamic_url(request,id):
+    
+    pass

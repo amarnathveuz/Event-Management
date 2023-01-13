@@ -20,6 +20,7 @@ urlpatterns = [
     path('edit_category/<int:pk>',views.edit_category,name='edit_category'),
     path('event_more_page/<int:pk>',views.event_more_page,name='event_more_page'),
     path('event_website',views.event_website,name='event_website'),
+    path('<str:id>',views.dynamic_url),
     
     
 
