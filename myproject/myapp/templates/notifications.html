@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block content %}
+
+<div class="row">
+
+
+    {% for i in data %}
+
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                {% if i.notification_type == 'Bank Account' %}
+                <p style="    font-size: 13px;
+                font-weight: 500;">New Bank Account Request <span style="float: right;
+    color: #bd4848;
+    font-weight: bold;">{{i.dt}}</span>
+            <br><span>Company Name : {{i.company_id.company_name}}</span>    
+            </p>
+            <a href=""  style="    padding: 5px 21px;
+            background: #ff2e2e;
+            color: white;
+            font-size: 12px;">Reject</a>
+            <a href="" style="    padding: 5px 21px;
+            background: green;
+            color: white;
+            font-size: 12px;">Accept</a>
+          
+                
+          
+
+                {% else %}
+
+                {% endif %}
+
+               <a href="view_notification_more?mapping_id={{i.mapping_id}}&id={{i.id}}" style="    float: right;
+               background: #8d7c7c;
+               color: white;
+               padding: 1px 13px;
+               font-size: 12px;">view</a>
+            </div>
+          </div>
+    </div>
+
+    {% endfor %}
+</div>
+
+
+{% endblock %}

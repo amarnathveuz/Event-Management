@@ -127,11 +127,14 @@
                       <label for="adults" class="font-weight-bold text-black">Ticket</label>
                       <div class="field-icon-wrap">
                         <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                        <select name="" id="adults" class="form-control">
-                          <option value="">1</option>
-                          <option value="">2</option>
-                          <option value="">3</option>
-                          <option value="">4+</option>
+                       
+                      
+                        <select name="acabados[]" id="adults" class="form-control" >
+                          <option value="0">0</option>
+                          {% for i in "x"|rjust:i.maximum|make_list %}
+                          <option value="{{ forloop.counter }}"> {{ forloop.counter }}</option>
+                         
+                         {% endfor %}
                         </select>
                       </div>
                     </div>
@@ -148,13 +151,13 @@
 <div class="mt-8">
     <br>
 
-    <button style="width: 24%;
+    <a style="width: 24%;
     border-radius: 0px;
     color: white;
     background: #35979c;
-    border: none;" type="submit" class="btn btn-primary btn-block a-submit" id="9">
+    border: none;"   class="btn btn-primary btn-block a-submit btn_reg" id="9">
                                 Register
-                            </button>
+</a>
 
                             <br>
                             <p>DATE & TIME</p>
@@ -218,5 +221,47 @@
     
 
     <script src="../static/website/js/main.js"></script>
+    
+
+    <script>
+      $(".btn_reg").click(function(){
+       
+        var select_data = []
+    $('select[name="acabados[]"]').each(function(){
+  
+      select_data.push(parseInt($(this).val()))
+     
+       
+    });
+
+    // $('#exampleModal').modal('show');
+    $.ajax({
+            url: 'user_book_ticket',
+            // datatype: 'json',
+            data: {
+                'slug': `{{slug}}`,
+                'select_data[]':select_data   
+            },
+            type: 'GET',
+            success: function (data) {  
+             
+              $("#append_booking").empty().append(data)
+     $('#exampleModal').modal('show');
+            }
+
+            });
+
+  
+      })
+      
+  
+    </script>
+
+    <!-- Button trigger modal -->
+
+
+<div id="append_booking">
+
+</div>
   </body>
 </html>

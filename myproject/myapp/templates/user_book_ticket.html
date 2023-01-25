@@ -1,0 +1,113 @@
+<!-- Modal -->
+
+{% load index %}
+<form action="book_data" method="POST">
+
+    {% csrf_token %}
+    
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Attendees</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div><input type="hidden" name="event_id" value="{{event_id}}">
+        <div class="modal-body ">
+   
+          {% for i in data2 %}
+       
+          <!-- {{select_data.forloop.counter0 }} -->
+       
+<!-- {{select_data|index:forloop.counter0|last }} -->
+          {% for i1 in select_data|index:forloop.counter0 %}
+     
+            {% if i1 == '0' %}
+
+            {% else %}
+
+          <div class="row mt-2">
+
+            <input type="hidden" name="ticket_type_id[]" value="{{i.id}}">
+            <input type="hidden" name="ticket_type_id_count[]" value="{{i1}}">
+          <div class="col-md-12">
+            <h1 style="font-weight: 500;
+            font-size: 19px;
+            padding: 12px 12px;"> {{i.name}} # {{i1}}</h1>
+          </div>
+         
+   
+
+
+            <div class="col-md-4">
+
+                <input type="text" class="form-control" name="name[]" placeholder="Name" required>
+
+            </div>
+            <div class="col-md-4">
+
+                <input type="text" class="form-control" name="email[]" placeholder="Email" required>
+
+            </div>
+            <div class="col-md-4">
+
+                <input type="text" class="form-control" name="phone[]" placeholder="Phone (Optional)">
+
+            </div>
+            {% for event_question_data in event_question_data %}
+
+            <div class="col-md-12 mt-2">
+
+              <div class="row" style="padding: 12px 12px;">
+
+                <div class="col-md-8 ">
+                  <p style="    color: #000000b8;
+                  font-size: 16px;
+                  font-weight: 500;">{{forloop.counter}} . {{event_question_data.title}}</p>
+                  
+                </div>
+                <div class="col-md-6">
+                  <input type="hidden" name="question_id{{i.id}}{{i1}}[]" value="{{event_question_data.id}}">
+
+                  {% if event_question_data.question_type == "Selection" %}
+
+                  <select name="question_answer{{i.id}}{{i1}}[]" class="form-control">
+                    {% for select_option in event_question_data.Event_selection_question_question_id.all %}
+                    <option value="{{select_option.answer}}">{{select_option.answer}}</option>
+                    {% endfor %}
+                  </select>
+
+                  {% else %}
+                
+                  <input name="question_answer{{i.id}}{{i1}}[]" type="text" class="form-control"> 
+
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+            {% endfor %}
+          </div>
+
+            {% endif %}
+          {% endfor %}
+          {% endfor %}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" style="    width: 24%;
+          border-radius: 0px;
+          color: white;
+     
+          border: none;" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary" style="    width: 24%;
+          border-radius: 0px;
+          color: white;
+          background: #35979c;
+          border: none;">Continue</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</form>

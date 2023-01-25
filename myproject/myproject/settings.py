@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-03b0brah^paz=p0$&5@nr&v^r!g%yp=$7*r$lc1q!5ws!iv2%v
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*','7d54-103-119-255-181.in.ngrok.io']
 
 
 # Application definition
@@ -137,3 +137,7 @@ STATIC_ROOT = BASE_DIR / 'static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media/'
 STATIC_URL = 'static/'
+
+
+RAZOR_KEY_ID = 'rzp_test_3yEIHJjeMDjXqU'
+RAZOR_KEY_SECRET = 'S153rCgOYaMJZRg1IROUcVOV'

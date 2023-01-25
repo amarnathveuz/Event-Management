@@ -90,11 +90,25 @@ Dashboard
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white " href="../pages/notifications.html">
+          <a class="nav-link text-white " href="{% url 'notifications' %}">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
               <i class="material-icons opacity-10">notifications</i>
             </div>
-            <span class="nav-link-text ms-1">Notifications</span>
+            <span class="nav-link-text ms-1">Notifications  <span style="    color: white;
+              font-weight: bold;
+              padding: 4px 10px;
+              background: red;
+              border-radius: 50%;
+              margin: 12px 12px;
+              font-size: 12px;">{{request.user|notification_count:"notification"}}</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white " href="{% url 'bank_account' %}">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="material-icons opacity-10">format_textdirection_r_to_l</i>
+            </div>
+            <span class="nav-link-text ms-1">Bank Account</span>
           </a>
         </li>
         <!-- <li class="nav-item mt-3">

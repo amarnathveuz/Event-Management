@@ -5,6 +5,11 @@ from django.contrib import messages
 from rest_framework.authtoken.models import Token
 from .models import *
 from django.db import IntegrityError, transaction
+import razorpay
+from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+razorpay_client = razorpay.Client(
+    auth=(settings.RAZOR_KEY_ID, settings.RAZOR_KEY_SECRET))
 
 # Create your views here.
 
@@ -236,7 +241,7 @@ def create_event(request):
                 for i in select_name:
                     save_select_answer = Event_selection_question.objects.create(Event_question_id_id=save_Event_question.id,answer=i)
         note = request.POST.get("note")
-        ticket_instructions = request.POST.getlist("ticket_instructions")
+        ticket_instructions = request.POST.get("ticket_instructions")
         save_note = Event_note.objects.create(event_id_id=data_save_event.id,note=note,ticket_instructions=ticket_instructions)
         
         messages.success(request,'event  successfully created')
@@ -497,12 +502,240 @@ def event_website(request):
     print("slug::::",str(slug))
     data = event_Creation.objects.get(slug=slug)
     context = {
-        'data':data
+        'data':data,
+        'slug':slug
     }
     return render(request,'event_website.html',context)
 
 
+def test1(request):
+    data = "amarnath"
+    return redirect("http://"+data+".localhost:8000/")
+    user_id = request.session['user_id']
+    print("second::::::",str(user_id))
+    return render(request,'hometest.html')
 
-def dynamic_url(request,id):
-    
+
+
+def dynamic_url(request):
+    user_id = request.GET.get("user_id")
+    print("user_id:::",str(user_id))
+    print("first methoddd")
+    request.session['user_id'] = user_id
+    return redirect("test1")
     pass
+
+
+
+def user_book_ticket(request):
+
+    slug = request.GET.get("slug")
+    select_data = request.GET.getlist("select_data[]")
+    print("select_data::::",str(select_data))
+    data2 = event_Creation.objects.get(slug=slug)
+    data3 = Event_ticket.objects.filter(event_id_id=data2.id)
+
+    event_question_data = Event_question.objects.filter(event_id_id=data2.id)
+    return render(request,'user_book_ticket.html',{'data2':data3,'select_data':select_data,'event_id':data2.id,'event_question_data':event_question_data})
+    
+
+from collections import Counter
+def book_data(request):
+    if request.method == "POST":
+        ticket_type_id = request.POST.getlist("ticket_type_id[]")
+        ticket_dict = {}
+        j = 0
+        for i in ticket_type_id:
+            ticket_dict["ticket_dict"+str(j)] = int(i)
+            print(i)
+            j = j+1
+        res = Counter(ticket_dict.values())
+        ticket_quantity = []
+        total_paid_amount = 0
+        for key, value in res.items():
+            ticket_instance_modal = Event_ticket.objects.get(id=key)
+            total_amount = ticket_instance_modal.price * value
+            total_paid_amount +=total_amount
+            a_dictionary = {"ticket_id" : key, "quantity" :value ,'total_amount':total_amount,'ticket_name':ticket_instance_modal.name}
+            ticket_quantity.append(a_dictionary)
+        name = request.POST.getlist("name[]")
+        email = request.POST.getlist("email[]")
+        phone = request.POST.getlist("phone[]")
+        
+
+        currency = 'INR'
+        tax_per = int(total_paid_amount)/100*3
+        total_paid_amount_data = total_paid_amount + tax_per
+        amount = total_paid_amount_data * 100
+        razorpay_order = razorpay_client.order.create(dict(amount=amount,
+                                                       currency=currency,
+                                                       payment_capture='0'))
+ 
+        razorpay_order_id = razorpay_order['id']
+        callback_url = 'paymenthandler/'
+        context = {}
+        context['ticket_quantity'] = ticket_quantity
+        context['total_paid_amount'] =total_paid_amount
+        context['tax_per'] = round(tax_per, 2)
+        context['total_paid_amount_data'] = total_paid_amount_data
+        context['razorpay_order_id'] = razorpay_order_id
+        context['razorpay_merchant_key'] = settings.RAZOR_KEY_ID
+        context['razorpay_amount'] = amount
+        context['currency'] = currency
+        context['callback_url'] = callback_url
+        context['name'] = name
+        event_id = request.POST.get("event_id")
+        zip_object = zip(name,email,phone,ticket_type_id)
+        try:
+            data = Event_Booking_Table.objects.get(order_id=razorpay_order_id)
+        except:
+
+            data_save = Event_Booking_Table.objects.create(event_id_id=event_id,order_id=razorpay_order_id,total_paid_amount=total_paid_amount_data,received_amount=total_paid_amount)
+            i = 0
+            ticket_type_id_count = request.POST.getlist("ticket_type_id_count[]")
+            ticket_type_id_new = request.POST.getlist("ticket_type_id[]")
+            for name,email,phone,ticket_type_id in zip_object:
+                save_ticket = Event_Booking_user_Data.objects.create(event_id_id=event_id,event_creation_id_id=data_save.id,name=name,email=email,phone=phone,ticket_type_id_id=ticket_type_id)
+                question_id = request.POST.getlist("question_id"+str(ticket_type_id_new[i]+str(ticket_type_id_count[i])+"[]"))
+                question_answer = request.POST.getlist("question_answer"+str(ticket_type_id_new[i]+str(ticket_type_id_count[i]+"[]")))
+
+                question_zip = zip(question_id,question_answer)
+                for question_id,question_answer in question_zip:
+                    data_save_question = Event_booking_user_question_table.objects.create(event_user_id_id=save_ticket.id,question_id_id=question_id,answer=question_answer)
+                i = i + 1
+
+        return render(request,'book_data.html',context)
+        pass
+
+
+def bank_account(request):
+    bank_account = False
+    user_data = company_User.objects.get(auth_user=request.user)
+    data_bank = ''
+    try:
+        data_bank = Bank_account_master.objects.get(company_id_id=user_data.company_id.id)
+        bank_account = True
+    except:
+        pass
+    context = {
+        'bank_account':bank_account,
+        'data_bank':data_bank
+    }
+    return render(request,'bank_account.html',context)
+    pass
+
+def create_bank(request):
+    if request.method == "POST":
+        account_name = request.POST.get("account_name")
+        account_email = request.POST.get("account_email")
+        business_name = request.POST.get("business_name")
+        business_type = request.POST.get("business_type")
+        branh_ifsc_code = request.POST.get("branh_ifsc_code")
+        account_no = request.POST.get("account_no")
+        re_account_no = request.POST.get("re_account_no")
+        beneficiary_name = request.POST.get("beneficiary_name")
+        data_company = company_User.objects.get(auth_user=request.user)
+        add_bank_account = Bank_account_master.objects.create(account_name=account_name,account_email=account_email,business_name=business_name,business_type=business_type,branh_ifsc_code=branh_ifsc_code,account_no=account_no,re_account_no=re_account_no,beneficiary_name=beneficiary_name,created_by=request.user,company_id_id=data_company.company_id.id)
+        save_notification = notification.objects.create(notification_type="Bank Account",mapping_id=add_bank_account.id,company_id_id=data_company.company_id.id,created_by=request.user)
+        return redirect("bank_account")
+
+    return render(request,'create_bank.html')
+    pass
+
+
+def notifications(request):
+    data = ''
+    if request.user.is_superuser == True:
+        data = notification.objects.filter(read_status=False)
+    context = {
+        'data':data
+    }
+    return render(request,'notifications.html',context)
+
+
+
+def view_notification_more(request):
+    mapping_id = request.GET.get("mapping_id")
+    id = request.GET.get("id")
+    print("mapping_id::::",str(mapping_id))
+    data = Bank_account_master.objects.get(id=mapping_id)
+    context = {
+        'data':data,
+        'notification_id':id
+    }
+    return render(request,'view_notification_more.html',context)
+
+
+def verifly_account_action(request):
+    if request.method == "POST":
+        notification_id = request.POST.get("notification_id")
+        update_id = request.POST.get("update_id")
+        account_id = request.POST.get("account_id")
+        update_notification = notification.objects.filter(id=notification_id).update(read_status=True)
+        update_bank_account = Bank_account_master.objects.filter(id=update_id).update(account_verifly_status=True,account_id=account_id)
+        return redirect("notifications")
+
+
+import requests
+import json
+
+
+def razorpay_account_transfer_api(account_id,amount,name,payment_id):
+    url = "https://api.razorpay.com/v1/payments/"+payment_id+"/transfers"
+    payload = json.dumps({
+        "transfers": [
+        {
+            "account": account_id,
+            "amount": amount*100,
+            "currency": "INR",
+            "notes": {
+                "name": name
+            }
+        }
+        ]
+    })
+    headers = {
+        'content-type': 'application/json',
+        'Authorization': 'Basic cnpwX3Rlc3RfM3lFSUhKamVNRGpYcVU6UzE1M3JDZ09ZYU1KWlJnMUlST1VjVk9W'
+    }
+    response = requests.request("POST", url, headers=headers, data=payload)
+    return response.json()
+
+    pass
+
+
+
+
+
+
+@csrf_exempt
+def paymenthandler(request):
+    if request.method == "POST":
+        payment_id = request.POST.get('razorpay_payment_id', '')
+        razorpay_order_id = request.POST.get('razorpay_order_id', '')
+        signature = request.POST.get('razorpay_signature', '')
+        params_dict = {
+                'razorpay_order_id': razorpay_order_id,
+                'razorpay_payment_id': payment_id,
+                'razorpay_signature': signature
+        }
+        result = razorpay_client.utility.verify_payment_signature(
+                params_dict)
+        if result is not None:
+            event_details_instance = Event_Booking_Table.objects.get(order_id=razorpay_order_id)
+            user_company = event_details_instance.event_id.company_id
+            amount = event_details_instance.total_paid_amount * 100
+            data = razorpay_client.payment.capture(payment_id, amount)
+            print("payment capture result---------")
+            print(data)
+            event_update = Event_Booking_Table.objects.filter(id=event_details_instance.id).update(payment_status=True,payment_id=payment_id)
+            booking_update = Event_Booking_user_Data.objects.filter(event_creation_id_id=event_details_instance.id).update(ticket_confirm_status=True)
+            print("user_company::::::::",str(user_company))
+            data_account = Bank_account_master.objects.get(company_id_id=user_company)
+            transfer_amount = razorpay_account_transfer_api(data_account.account_id,event_details_instance.received_amount,data_account.account_name,payment_id)
+            return
+
+
+
+def test_r1(request):
+    return render(request,'test_r1.html')

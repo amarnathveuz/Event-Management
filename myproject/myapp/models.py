@@ -144,3 +144,66 @@ class Event_note(common):
     event_id = models.ForeignKey(event_Creation,related_name='Event_note_event_id',null=True,on_delete=models.CASCADE)  
     note = models.CharField(max_length=25,null=True)
     ticket_instructions = models.CharField(max_length=25,null=True)
+
+
+
+business_type = (
+    ("Private Limited","Private Limited"),
+    ("Proprietorship","Proprietorship"),
+    ("Partnership","Partnership"),
+    ("Individual","Individual"),
+    ("Public Limited","Public Limited"),
+    ("LLP","LLP"),
+    ("Trust","Trust"),
+    ("Society","Society"),
+    ("NGO","NGO")
+)
+
+class Bank_account_master(common):
+    account_name = models.CharField(max_length=55,null=True)
+    account_email = models.CharField(max_length=55,null=True)
+    business_name = models.CharField(max_length=55,null=True)
+    business_type = models.CharField(choices=business_type,null=True,max_length=25)
+    branh_ifsc_code = models.CharField(max_length=25,null=True)
+    account_no = models.CharField(max_length=25,null=True)
+    re_account_no = models.CharField(max_length=25,null=True)
+    beneficiary_name = models.CharField(max_length=25,null=True)
+    account_verifly_status = models.BooleanField(default=False)
+    company_id = models.ForeignKey(company_Master,related_name='Bank_account_master_company_id',null=True,on_delete=models.CASCADE)
+    account_id = models.CharField(max_length=55,null=True)
+
+
+notification_type = (
+     ("Bank Account","Bank Account"),
+   
+)
+class notification(common):
+    notification_type = models.CharField(choices=notification_type,null=True,max_length=25)
+    mapping_id = models.IntegerField(null=True)
+    read_status = models.BooleanField(default=False)
+    company_id = models.ForeignKey(company_Master,related_name='notification_id',null=True,on_delete=models.CASCADE)
+    
+
+class Event_Booking_Table(common):
+    event_id = models.ForeignKey(event_Creation,related_name='Event_Booking_Table_event_id',null=True,on_delete=models.CASCADE)
+    order_id = models.CharField(max_length=55,null=True)
+    payment_id = models.CharField(max_length=55,null=True)
+    total_paid_amount = models.FloatField(null=True)
+    received_amount = models.FloatField(null=True)
+    payment_status = models.BooleanField(default=False)
+
+class Event_Booking_user_Data(common):
+    event_id = models.ForeignKey(event_Creation,related_name='Event_Booking_user_Data_bookig_table_id',null=True,on_delete=models.CASCADE)
+    event_creation_id = models.ForeignKey(Event_Booking_Table,related_name='Event_Booking_user_Data_event_id',null=True,on_delete=models.CASCADE)
+    name = models.CharField(max_length=25,null=True)
+    email = models.CharField(max_length=25,null=True)
+    phone = models.CharField(max_length=25,null=True)
+    ticket_type_id = models.ForeignKey(Event_ticket,related_name='Event_Booking_user_Data_ticket_type_id',null=True,on_delete=models.CASCADE)
+    ticket_confirm_status = models.BooleanField(default=False)
+
+
+class Event_booking_user_question_table(common):
+    event_user_id = models.ForeignKey(Event_Booking_user_Data,related_name='Event_booking_user_question_table_user_id',null=True,on_delete=models.CASCADE)
+    question_id = models.ForeignKey(Event_question,related_name='Event_booking_user_question_table_question_id',null=True,on_delete=models.CASCADE)
+    answer = models.CharField(max_length=255,null=True)
+    
