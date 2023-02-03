@@ -30,7 +30,32 @@ urlpatterns = [
     path('view_notification_more',views.view_notification_more,name='view_notification_more'),
     path('verifly_account_action',views.verifly_account_action,name='verifly_account_action'),
     path('paymenthandler/', views.paymenthandler, name='paymenthandler'),
-    path('test_r1',views.test_r1,name='test_r1')
+    path('test_r1',views.test_r1,name='test_r1'),
+    path('event_attendees_user_modal',views.event_attendees_user_modal,name='event_attendees_user_modal'),
+    path('confirm_booking_action',views.confirm_booking_action,name='confirm_booking_action'),
+    path('attend_booking_action',views.attend_booking_action,name='attend_booking_action'),
+    path('cancel_booking_action',views.cancel_booking_action,name='cancel_booking_action'),
+    path('configuration',views.configuration,name='configuration'),
+    path('sponsor_level',views.sponsor_level,name='sponsor_level'),
+    path('create_sponsor_level',views.create_sponsor_level,name='create_sponsor_level'),
+    path('edit_sponsor_level/<int:pk>',views.edit_sponsor_level,name='edit_sponsor_level'),
+    path('sponsor_type',views.sponsor_type,name='sponsor_type'),
+    path('create_sponsor_type',views.create_sponsor_type,name='create_sponsor_type'),
+    path('edit_sponsor_type/<int:pk>',views.edit_sponsor_type,name='edit_sponsor_type'),
+    path('booth_category',views.booth_category,name='booth_category'),
+    path('create_booth',views.create_booth,name='create_booth'),
+    path('edit__booth_category/<int:pk>',views.edit__booth_category,name='edit__booth_category'),
+    path('event_create_booth/<int:pk>',views.event_create_booth,name='event_create_booth'),
+    path('create_event_booth/<int:pk>',views.create_event_booth,name='create_event_booth'),
+
+
+
+
+
+
+
+
+
     
     
     

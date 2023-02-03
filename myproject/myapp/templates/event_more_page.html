@@ -180,9 +180,70 @@ h3 {
 <!-- 3. BOOTSTRAP v4.0.0         JS !-->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 <div class="form-box">
-    <a href="../event_website?slug={{data.slug}}" target="_blank">
-        <img style="    width: 3%;" src="../static/e1.png">
-    </a>
+
+  <div class="row " >
+    <div class="col-md-2 m-2" style="width: 10.666667%!important;   background: #f1f1f1; 
+    padding: 6px 9px;
+">
+      <a href="../event_website?slug={{data.slug}}" target="_blank"><i style="    font-size: 28px;" class="fa fa-fw o_button_icon fa-globe text-danger"> </i><span style="    font-size: 13px;
+        display: block;
+        max-width: 77%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        vertical-align: top;
+        line-height: 1.2;
+        font-weight: 700;
+        color: #0000008f;">Go to website</span></a>
+
+    </div>
+
+    <div class="col-md-2 m-2" style="width: 10.666667%!important;    
+    background: #f1f1f1;
+    padding: 6px 9px;
+">
+
+      <a href="#"  class="btn_attendees"><i style="    font-size: 28px;" class="fa fa-fw o_button_icon fa-users"><span style="    font-size: 15px;
+        font-weight: 100;
+        padding: 7px 8px">{{booking_user_count}}</span> </i><span style="    font-size: 13px;
+        display: block;
+        max-width: 77%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        vertical-align: top;
+        line-height: 1.2;
+        font-weight: 700;
+        color: #0000008f;">Attendees</span></a>
+
+    </div>
+    <div class="col-md-2 m-2" style="width: 10.666667%!important;    
+    background: #f1f1f1;
+    padding: 6px 9px;
+">
+
+      <a href="{% url 'event_create_booth' data.id %}"  class=""><i style="    font-size: 28px;" class="fa fa-fw o_button_icon fa-university"><span style="    font-size: 15px;
+        font-weight: 100;
+        padding: 7px 8px">0</span> </i><span style="    font-size: 13px;
+        display: block;
+        max-width: 77%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        vertical-align: top;
+        line-height: 1.2;
+        font-weight: 700;
+        color: #0000008f;">Booths</span></a>
+
+    </div>
+  </div>
+
+ 
+<hr style="   border-top: 2px solid black;
+width: 105%;
+margin-left: -38px;">
+
+   
     <h1 style="    font-size: 24px;
     padding: 7px 17px;">{{data.name}}</h1>
    
@@ -497,6 +558,11 @@ h3 {
 
 
 
+    <div id="modal_append">
+
+    </div>
+
+    
     {% if messages %}
     <script>
      {% for message in messages %}
@@ -506,6 +572,49 @@ h3 {
             '{{message.tags}}'
         )
      {% endfor %}
+
+    
     </script>
     {% endif %}
+
+
+    <script>
+
+
+$(".btn_attendees").click(function(){
+ 
+
+  var url ="{% url 'event_attendees_user_modal' %}"
+  $.ajax({
+    url:url,
+    data:{
+      'id':`{{pk}}`
+    },
+    success: function (data) {  
+
+      $("#modal_append").append(data)
+      $('#code').modal('show');
+
+
+    }  });
+
+})
+    </script>
+  
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
+{% if messages %}
+<script>
+ {% for message in messages %}
+    Swal.fire(
+        '',
+        '{{ message }}',
+        '{{message.tags}}'
+    )
+ {% endfor %}
+</script>
+{% endif %}
 {% endblock %}

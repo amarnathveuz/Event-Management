@@ -192,6 +192,14 @@ class Event_Booking_Table(common):
     received_amount = models.FloatField(null=True)
     payment_status = models.BooleanField(default=False)
 
+event_confirm_status = (
+    ("pending","pending"),
+    ("confirm","confirm"),
+    ("cancel","cancel"),
+    ("attended","attended")
+)
+
+
 class Event_Booking_user_Data(common):
     event_id = models.ForeignKey(event_Creation,related_name='Event_Booking_user_Data_bookig_table_id',null=True,on_delete=models.CASCADE)
     event_creation_id = models.ForeignKey(Event_Booking_Table,related_name='Event_Booking_user_Data_event_id',null=True,on_delete=models.CASCADE)
@@ -200,6 +208,8 @@ class Event_Booking_user_Data(common):
     phone = models.CharField(max_length=25,null=True)
     ticket_type_id = models.ForeignKey(Event_ticket,related_name='Event_Booking_user_Data_ticket_type_id',null=True,on_delete=models.CASCADE)
     ticket_confirm_status = models.BooleanField(default=False)
+    confirm_status = models.CharField(choices=event_confirm_status,default="pending",max_length=255)
+
 
 
 class Event_booking_user_question_table(common):
@@ -207,3 +217,29 @@ class Event_booking_user_question_table(common):
     question_id = models.ForeignKey(Event_question,related_name='Event_booking_user_question_table_question_id',null=True,on_delete=models.CASCADE)
     answer = models.CharField(max_length=255,null=True)
     
+
+
+ribbon_type = (
+    ("no_ribbon","no_ribbon"),
+    ("Gold","Gold"),
+    ("Silver","Silver"),
+    ("Bronze","Bronze")
+)
+
+class Sponsor_level(common):
+    company_id = models.ForeignKey(company_Master,related_name='Sponsor_level_company_id',null=True,on_delete=models.CASCADE)
+    sponsor_level = models.CharField(max_length=55,null=True)
+    ribbon_style = models.CharField(max_length=25,null=True)
+
+class Sponsor_Type(common):
+    company_id = models.ForeignKey(company_Master,related_name='Sponsor_Type_company_id',null=True,on_delete=models.CASCADE)
+    sponsor_type = models.CharField(max_length=25,null=True)
+
+class Booth_Category_type(common):
+    company_id = models.ForeignKey(company_Master,related_name='Booth_Category_type_company_id',null=True,on_delete=models.CASCADE)
+    booth_category = models.CharField(max_length=25,null=True)
+    price = models.FloatField(null=True)
+    product = models.CharField(max_length=25,null=True)
+    sponser_status = models.BooleanField(default=False)
+    sponser_level = models.ForeignKey(Sponsor_level,related_name='Booth_Category_type_sponser_level',null=True,on_delete=models.CASCADE)
+    sponsor_type = models.ForeignKey(Sponsor_Type,related_name='Booth_Category_type_sponser_type',null=True,on_delete=models.CASCADE)

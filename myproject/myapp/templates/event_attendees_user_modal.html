@@ -1,0 +1,95 @@
+
+    <div id="code" class="modal fade bd-example-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+          <div class="modal-content" style="padding: 26px 10px;">
+            <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th scope="col" style="    font-weight: bold;
+                    font-size: 12px;">Registration Date</th>
+                      <th scope="col" style="    font-weight: bold;
+                      font-size: 12px;">Attendee Name</th>
+                     <th scope="col" style="    font-weight: bold;
+                     font-size: 12px;">Email</th>
+                       <th scope="col" style="    font-weight: bold;
+                       font-size: 12px;">Phone</th>
+                         <th scope="col" style="    font-weight: bold;
+                         font-size: 12px;">Event Ticket </th>
+                          <th scope="col" style="    font-weight: bold;
+                          font-size: 12px;">Confirm Status </th>
+                          <th>
+
+                          </th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                    {% for i in data %}
+                  <tr>
+                    <th scope="row"  style="    font-weight: 200;
+                    font-size: 12px;">{{i.dt}}</th>
+                    <th scope="row"  style="    font-weight: 200;
+                    font-size: 12px;">{{i.name|title}}</th>
+                    <th scope="row"  style="    font-weight: 200;
+                    font-size: 12px;">{{i.email}}</th>
+                    <th scope="row"  style="    font-weight: 200;
+                    font-size: 12px;">{{i.phone}}</th>
+                    <th scope="row"  style="    font-weight: 200;
+                    font-size: 12px;">{{i.ticket_type_id.name}}</th>
+                    <th scope="row"  style="    font-weight: 200;
+                    font-size: 12px;">
+
+                        {% if i.confirm_status == "pending" %}
+                        <span style="background: #017e84;
+                        padding: 2px 13px;
+                        color: white;
+                        font-size: 12px;
+                        border-radius: 12px;">
+                            Unconfirmed
+                        </span>
+
+                        {% else %}
+                        <span style="background: #017e84;
+                        padding: 2px 13px;
+                        color: white;
+                        font-size: 12px;
+                        border-radius: 12px;">{{i.confirm_status|title}}</span>
+
+                        {% endif %}
+
+
+                    </th>
+                    <th>
+
+                        {% if i.confirm_status == "pending"   %}
+                        <a href="../confirm_booking_action?id={{i.id}}" style="    font-size: 11px;
+                        color: #01666b;"><i class="fa fa-fw o_button_icon fa-check"></i>Confirm</a>
+&nbsp;&nbsp;
+<a href="../cancel_booking_action?id={{i.id}}" style="    font-size: 11px;
+color: red;"><i class="fa fa-fw o_button_icon fa-times"></i>Cancel</a>
+{% elif i.confirm_status == "cancel"   %}
+
+{% elif i.confirm_status == "attended"   %}
+
+{% else %}
+<a href="../attend_booking_action?id={{i.id}}" style="    font-size: 11px;
+color: #01666b;"><i class="fa fa-fw o_button_icon fa-level-down"></i>Mark as Attending</a>
+&nbsp;&nbsp;
+<a href="../cancel_booking_action?id={{i.id}}" style="    font-size: 11px;
+color: red;"><i class="fa fa-fw o_button_icon fa-times"></i>Cancel</a>
+{% endif %}
+                    </th>
+                  </tr>
+                  {% endfor %}
+              
+                
+                </tbody>
+              </table>
+            <div class="modal-footer">
+                <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button> -->
+              </div>
+          </div>
+          
+        </div>
+      </div>

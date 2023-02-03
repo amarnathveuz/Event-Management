@@ -490,9 +490,13 @@ def event_more_page(request,pk):
     data = event_Creation.objects.get(id=pk)
     print("data::::",str(data))
     data_event_note = Event_note.objects.get(event_id_id=pk)
+    booking_user_count = Event_Booking_user_Data.objects.filter(event_id=data.id,ticket_confirm_status=True).count()
+    print("count:::",str(booking_user_count))
     context = {
         'data':data,
-        'data_event_note':data_event_note
+        'data_event_note':data_event_note,
+        'booking_user_count':booking_user_count,
+        'pk':pk
     }
     return render(request,'event_more_page.html',context)
 
@@ -739,3 +743,210 @@ def paymenthandler(request):
 
 def test_r1(request):
     return render(request,'test_r1.html')
+
+
+def event_attendees_user_modal(request):
+    id = request.GET.get("id")
+    data = Event_Booking_user_Data.objects.filter(event_id_id=id,ticket_confirm_status=True)
+    context = {
+        'data':data
+    }
+    return render(request,'event_attendees_user_modal.html',context)
+
+
+
+
+def confirm_booking_action(request):
+    id = request.GET.get("id")
+    print("id::::::::",str(id))
+    data_update = Event_Booking_user_Data.objects.filter(id=id).update(confirm_status="confirm")
+    messages.success(request,"Your booking has been confirmed")
+    return redirect(request.META['HTTP_REFERER'])
+
+
+def attend_booking_action(request):
+    id = request.GET.get("id")
+    print("id::::::::",str(id))
+    data_update = Event_Booking_user_Data.objects.filter(id=id).update(confirm_status="attended")
+    messages.success(request,"Attended")
+    return redirect(request.META['HTTP_REFERER'])
+
+
+
+def cancel_booking_action(request):
+    id = request.GET.get("id")
+    print("id::::::::",str(id))
+    data_update = Event_Booking_user_Data.objects.filter(id=id).update(confirm_status="cancel")
+    messages.success(request,"Your booking has been cancel")
+    return redirect(request.META['HTTP_REFERER'])
+
+
+def configuration(request):
+    return render(request,'configuration.html')
+    pass
+
+def sponsor_level(request):
+    user_data = company_User.objects.get(auth_user=request.user)
+    company_id = user_data.company_id.id
+    data = Sponsor_level.objects.filter(company_id_id=company_id)
+    context = {
+        'data':data
+    }
+    return render(request,'sponsor_level.html',context)
+
+
+def create_sponsor_level(request):
+    if request.method == "POST":
+        sponsor_level = request.POST.get("sponsor_level")
+        ribbon_style = request.POST.get("ribbon_style")
+        user_data = company_User.objects.get(auth_user=request.user)
+        company_id = user_data.company_id.id
+        data_save = Sponsor_level.objects.create(company_id_id=company_id,sponsor_level=sponsor_level,ribbon_style=ribbon_style)
+        messages.success(request,"success")
+        return redirect(request.META['HTTP_REFERER'])
+    return render(request,'create_sponsor_level.html')
+    pass
+
+
+def edit_sponsor_level(request,pk):
+
+    if request.method == "POST":
+        sponsor_level = request.POST.get("sponsor_level")
+        ribbon_style = request.POST.get("ribbon_style")
+        data_update = Sponsor_level.objects.filter(id=pk).update(sponsor_level=sponsor_level,ribbon_style=ribbon_style)
+        messages.success(request,"update")
+        return redirect(request.META['HTTP_REFERER'])
+    data = Sponsor_level.objects.get(id=pk)
+    context = {
+        'data':data
+    }
+    
+    return render(request,'edit_sponsor_level.html',context)
+
+
+
+def sponsor_type(request):
+    user_data = company_User.objects.get(auth_user=request.user)
+    company_id = user_data.company_id.id
+    data = Sponsor_Type.objects.filter(company_id_id=company_id)
+    context = {
+        'data':data
+    }
+    return render(request,'sponsor_type.html',context)
+
+
+
+def create_sponsor_type(request):
+    if request.method == "POST":
+        user_data = company_User.objects.get(auth_user=request.user)
+        company_id = user_data.company_id.id
+        sponsor_type = request.POST.get("sponsor_type")
+        data_save = Sponsor_Type.objects.create(company_id_id=company_id,sponsor_type=sponsor_type)
+        messages.success(request,"success")
+        return redirect(request.META['HTTP_REFERER'])
+
+    return render(request,'create_sponsor_type.html')
+
+
+def edit_sponsor_type(request,pk):
+    if request.method == "POST":
+        sponsor_type = request.POST.get("sponsor_type")
+        data_update = Sponsor_Type.objects.filter(id=pk).update(sponsor_type=sponsor_type)
+        messages.success(request,"update")
+        return redirect(request.META['HTTP_REFERER'])
+    data = Sponsor_Type.objects.get(id=pk)
+    return render(request,'edit_sponsor_type.html',{'data':data})
+
+
+
+def booth_category(request):
+    user_data = company_User.objects.get(auth_user=request.user)
+    company_id = user_data.company_id.id
+    data = Booth_Category_type.objects.filter(company_id_id=company_id)
+    context = {
+        'data':data
+    }
+    return render(request,'booth_category.html',context)
+
+
+def create_booth(request):
+    if request.method == "POST":
+        booth_category = request.POST.get("booth_category")
+        product = request.POST.get("product")
+        price = request.POST.get("price")
+        sponser_status = request.POST.get("sponser_status")
+        sponser_level = None
+        sponsor_type = None
+        sponser_status_new = False
+        if sponser_status == 'on':
+            sponser_level = request.POST.get("sponser_level")
+            sponsor_type = request.POST.get("sponsor_type")
+            sponser_status_new = True
+        else:
+            sponser_status_new = False
+        user_data = company_User.objects.get(auth_user=request.user)
+        company_id = user_data.company_id.id
+        data_save = Booth_Category_type.objects.create(company_id_id=company_id,booth_category=booth_category,price=price,product=product,sponser_status=sponser_status_new,sponser_level_id=sponser_level,sponsor_type_id=sponsor_type)
+        messages.success(request,"success")
+        return redirect(request.META['HTTP_REFERER']) 
+    user_data = company_User.objects.get(auth_user=request.user)
+    company_id = user_data.company_id.id
+    sponsor_level = Sponsor_level.objects.filter(company_id_id=company_id)
+    sponsor_type = Sponsor_Type.objects.filter(company_id_id=company_id)
+    context = {
+        'sponsor_level':sponsor_level,
+        'sponsor_type':sponsor_type
+    }
+
+    return render(request,'create_booth.html',context)
+
+
+
+def edit__booth_category(request,pk):
+
+    if request.method == "POST":
+        booth_category = request.POST.get("booth_category")
+        price = request.POST.get("price")
+        sponser_status = request.POST.get("sponser_status")
+        product = request.POST.get("product")
+        if sponser_status == "on":
+            sponser_level = request.POST.get("sponser_level")
+            sponsor_type = request.POST.get("sponsor_type")
+            update = Booth_Category_type.objects.filter(id=pk).update(booth_category=booth_category,price=price,product=product,sponser_status=True,sponser_level=sponser_level,sponsor_type=sponsor_type)
+            pass
+        else:
+            update = Booth_Category_type.objects.filter(id=pk).update(booth_category=booth_category,price=price,product=product,sponser_status=False,sponser_level=None,sponsor_type=None)
+            pass
+        messages.success(request,"update")
+        return redirect(request.META['HTTP_REFERER'])
+    data = Booth_Category_type.objects.get(id=pk)
+    user_data = company_User.objects.get(auth_user=request.user)
+    company_id = user_data.company_id.id
+    sponsor_level = Sponsor_level.objects.filter(company_id_id=company_id)
+    sponsor_type = Sponsor_Type.objects.filter(company_id_id=company_id)
+    context = {
+        'data':data,
+        'sponsor_level':sponsor_level,
+        'sponsor_type':sponsor_type
+    }
+    return render(request,'edit__booth_category.html',context)
+
+
+def event_create_booth(request,pk):
+    context = {
+        'pk':pk
+    }
+    return render(request,'event_create_booth.html',context)
+
+    pass
+
+def create_event_booth(request,pk):
+    print("pk::::::::",str(pk))
+    user_data = company_User.objects.get(auth_user=request.user)
+    company_id = user_data.company_id.id
+    booth_category = Booth_Category_type.objects.filter(company_id_id=company_id)
+    context = {
+        'booth_category':booth_category
+    }
+    return render(request,'create_event_booth.html',context)
+    pass
